@@ -1,10 +1,10 @@
-package core_test
+package runtime_test
 
 import (
 	"reflect"
 	"testing"
 
-	"github.com/MaineK00n/go-microsoft-version/dotnet/core"
+	"github.com/MaineK00n/go-microsoft-version/dotnet/core/runtime"
 )
 
 func TestNewVersion(t *testing.T) {
@@ -14,68 +14,68 @@ func TestNewVersion(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    core.Version
+		want    runtime.Version
 		wantErr bool
 	}{
 		{
 			name: "8.0.2",
 			args: args{ver: "8.0.2"},
-			want: core.Version{Major: 8, Minor: 0, Patch: 2},
+			want: runtime.Version{Major: 8, Minor: 0, Patch: 2},
 		},
 		{
 			name: "9.0.13",
 			args: args{ver: "9.0.13"},
-			want: core.Version{Major: 9, Minor: 0, Patch: 13},
+			want: runtime.Version{Major: 9, Minor: 0, Patch: 13},
 		},
 		{
 			name: "trailing space 6.0.36 ",
 			args: args{ver: "6.0.36 "},
-			want: core.Version{Major: 6, Minor: 0, Patch: 36},
+			want: runtime.Version{Major: 6, Minor: 0, Patch: 36},
 		},
 		{
 			name: "11.0.0-rc.2",
 			args: args{ver: "11.0.0-rc.2"},
-			want: core.Version{Major: 11, Minor: 0, Patch: 0, Prerelease: "rc.2"},
+			want: runtime.Version{Major: 11, Minor: 0, Patch: 0, Prerelease: "rc.2"},
 		},
 		{
 			name: "11.0.0-rc.2.26504.105",
 			args: args{ver: "11.0.0-rc.2.26504.105"},
-			want: core.Version{Major: 11, Minor: 0, Patch: 0, Prerelease: "rc.2.26504.105"},
+			want: runtime.Version{Major: 11, Minor: 0, Patch: 0, Prerelease: "rc.2.26504.105"},
 		},
 		{
 			name: "SDK 11.0.100-rc.3",
 			args: args{ver: "11.0.100-rc.3"},
-			want: core.Version{Major: 11, Minor: 0, Patch: 100, Prerelease: "rc.3"},
+			want: runtime.Version{Major: 11, Minor: 0, Patch: 100, Prerelease: "rc.3"},
 		},
 		{
 			name: "SDK 11.0.100-rc.3.26522.148",
 			args: args{ver: "11.0.100-rc.3.26522.148"},
-			want: core.Version{Major: 11, Minor: 0, Patch: 100, Prerelease: "rc.3.26522.148"},
+			want: runtime.Version{Major: 11, Minor: 0, Patch: 100, Prerelease: "rc.3.26522.148"},
 		},
 		{
 			name: "5.0.6-servicing.21220.11",
 			args: args{ver: "5.0.6-servicing.21220.11"},
-			want: core.Version{Major: 5, Minor: 0, Patch: 6, Prerelease: "servicing.21220.11"},
+			want: runtime.Version{Major: 5, Minor: 0, Patch: 6, Prerelease: "servicing.21220.11"},
 		},
 		{
 			name: "SDK 9.0.100-preview.7.24407.12",
 			args: args{ver: "9.0.100-preview.7.24407.12"},
-			want: core.Version{Major: 9, Minor: 0, Patch: 100, Prerelease: "preview.7.24407.12"},
+			want: runtime.Version{Major: 9, Minor: 0, Patch: 100, Prerelease: "preview.7.24407.12"},
 		},
 		{
 			name: "hyphen in prerelease identifier 8.0.0-alpha-1.0",
 			args: args{ver: "8.0.0-alpha-1.0"},
-			want: core.Version{Major: 8, Minor: 0, Patch: 0, Prerelease: "alpha-1.0"},
+			want: runtime.Version{Major: 8, Minor: 0, Patch: 0, Prerelease: "alpha-1.0"},
 		},
 		{
 			name: "build metadata 8.0.2+abc.001",
 			args: args{ver: "8.0.2+abc.001"},
-			want: core.Version{Major: 8, Minor: 0, Patch: 2, Build: "abc.001"},
+			want: runtime.Version{Major: 8, Minor: 0, Patch: 2, Build: "abc.001"},
 		},
 		{
 			name: "prerelease and build metadata 11.0.0-rc.2+sha.5114f85",
 			args: args{ver: "11.0.0-rc.2+sha.5114f85"},
-			want: core.Version{Major: 11, Minor: 0, Patch: 0, Prerelease: "rc.2", Build: "sha.5114f85"},
+			want: runtime.Version{Major: 11, Minor: 0, Patch: 0, Prerelease: "rc.2", Build: "sha.5114f85"},
 		},
 		{
 			name:    "two parts",
@@ -155,7 +155,7 @@ func TestNewVersion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := core.NewVersion(tt.args.ver)
+			got, err := runtime.NewVersion(tt.args.ver)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewVersion() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -265,11 +265,11 @@ func TestVersion_Compare(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			v1, err := core.NewVersion(tt.args.v1)
+			v1, err := runtime.NewVersion(tt.args.v1)
 			if err != nil {
 				t.Fatalf("NewVersion(%q) error = %v", tt.args.v1, err)
 			}
-			v2, err := core.NewVersion(tt.args.v2)
+			v2, err := runtime.NewVersion(tt.args.v2)
 			if err != nil {
 				t.Fatalf("NewVersion(%q) error = %v", tt.args.v2, err)
 			}
@@ -324,7 +324,7 @@ func TestVersion_String(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			v := core.Version{
+			v := runtime.Version{
 				Major:      tt.fields.Major,
 				Minor:      tt.fields.Minor,
 				Patch:      tt.fields.Patch,
@@ -351,7 +351,7 @@ func TestVersion_String_RoundTrip(t *testing.T) {
 	}
 	for _, ver := range tests {
 		t.Run(ver, func(t *testing.T) {
-			v, err := core.NewVersion(ver)
+			v, err := runtime.NewVersion(ver)
 			if err != nil {
 				t.Fatalf("NewVersion() error = %v", err)
 			}
