@@ -19,8 +19,10 @@ type Version struct {
 	Build string
 }
 
-// NewVersion returns a parsed version. SDK versions before 2.1.300 (e.g. "2.1.4") have no
-// feature band and are rejected.
+// NewVersion returns a parsed version. It rejects a patch below 100, which has no feature
+// band. Only the patch is checked: SDKs released before feature bands began with 2.1.300
+// are rejected when their patch is below 100 (e.g. "2.1.4") but accepted otherwise (e.g.
+// "2.1.200").
 func NewVersion(ver string) (Version, error) {
 	ver = strings.TrimSpace(ver)
 	major, minor, patch, pre, build, err := semver.Parse(ver)
