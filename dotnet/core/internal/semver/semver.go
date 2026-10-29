@@ -9,13 +9,15 @@ import (
 )
 
 // Parse parses "<major>.<minor>.<patch>[-<prerelease>][+<build>]".
+// Leading zeros in major, minor and patch are accepted (e.g. "08.0.02" is 8.0.2), as in the
+// earlier dotnet/core package. Errors do not repeat ver; callers wrap them with it.
 func Parse(ver string) (major, minor, patch int, prerelease, build string, err error) {
 	rest, build, hasBuild := strings.Cut(ver, "+")
 	core, prerelease, hasPre := strings.Cut(rest, "-")
 
 	ss := strings.Split(core, ".")
 	if len(ss) != 3 {
-		return 0, 0, 0, "", "", fmt.Errorf("unexpected version format. expected: %q, actual: %q", "<major>.<minor>.<patch>[-<prerelease>][+<build>]", ver)
+		return 0, 0, 0, "", "", fmt.Errorf("unexpected version format. expected: %q", "<major>.<minor>.<patch>[-<prerelease>][+<build>]")
 	}
 
 	major, err = strconv.Atoi(ss[0])

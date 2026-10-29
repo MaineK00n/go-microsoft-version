@@ -19,7 +19,8 @@ type Version struct {
 	Build string
 }
 
-// NewVersion returns a parsed version
+// NewVersion returns a parsed version. SDK versions before 2.1.300 (e.g. "2.1.4") have no
+// feature band and are rejected.
 func NewVersion(ver string) (Version, error) {
 	ver = strings.TrimSpace(ver)
 	major, minor, patch, pre, build, err := semver.Parse(ver)
@@ -27,7 +28,7 @@ func NewVersion(ver string) (Version, error) {
 		return Version{}, fmt.Errorf("parse .NET (Core/5+) SDK version %q. err: %w", ver, err)
 	}
 	if patch < 100 {
-		return Version{}, fmt.Errorf("unexpected .NET (Core/5+) SDK version format. expected: %q (feature band >= 1), actual: %q", "<major>.<minor>.<feature band><2-digit patch>", ver)
+		return Version{}, fmt.Errorf("parse .NET (Core/5+) SDK version %q. err: unexpected patch. expected: %q", ver, "<feature band><2-digit patch> (100 or above)")
 	}
 	return Version{Major: major, Minor: minor, Patch: patch, Prerelease: pre, Build: build}, nil
 }

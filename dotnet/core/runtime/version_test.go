@@ -78,6 +78,31 @@ func TestNewVersion(t *testing.T) {
 			want: runtime.Version{Major: 11, Minor: 0, Patch: 0, Prerelease: "rc.2", Build: "sha.5114f85"},
 		},
 		{
+			name: "leading zeros in core 08.0.02",
+			args: args{ver: "08.0.02"},
+			want: runtime.Version{Major: 8, Minor: 0, Patch: 2},
+		},
+		{
+			name: "hyphen in build metadata 8.0.2+abc-def",
+			args: args{ver: "8.0.2+abc-def"},
+			want: runtime.Version{Major: 8, Minor: 0, Patch: 2, Build: "abc-def"},
+		},
+		{
+			name:    "signed patch 8.0.-1",
+			args:    args{ver: "8.0.-1"},
+			wantErr: true,
+		},
+		{
+			name:    "signed major +8.0.2",
+			args:    args{ver: "+8.0.2"},
+			wantErr: true,
+		},
+		{
+			name:    "empty build metadata after prerelease",
+			args:    args{ver: "8.0.2-rc.1+"},
+			wantErr: true,
+		},
+		{
 			name:    "two parts",
 			args:    args{ver: "8.0"},
 			wantErr: true,
@@ -185,6 +210,11 @@ func TestVersion_Compare(t *testing.T) {
 		{
 			name: "6.0.36 < 8.0.2",
 			args: args{v1: "6.0.36", v2: "8.0.2"},
+			want: -1,
+		},
+		{
+			name: "hyphenated identifier is alphanumeric 8.0.2-1 < 8.0.2--1",
+			args: args{v1: "8.0.2-1", v2: "8.0.2--1"},
 			want: -1,
 		},
 		{

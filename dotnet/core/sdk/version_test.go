@@ -58,6 +58,11 @@ func TestNewVersion(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name:    "before feature bands 2.1.4",
+			args:    args{ver: "2.1.4"},
+			wantErr: true,
+		},
+		{
 			name:    "patch 0 11.0.0-rc.2",
 			args:    args{ver: "11.0.0-rc.2"},
 			wantErr: true,
@@ -192,6 +197,16 @@ func TestVersion_Compare(t *testing.T) {
 		{
 			name: "cross band 10.0.399 < 10.0.400",
 			args: args{v1: "10.0.399", v2: "10.0.400"},
+			want: -1,
+		},
+		{
+			name: "cross band prerelease 10.0.399 < 10.0.400-rc.1",
+			args: args{v1: "10.0.399", v2: "10.0.400-rc.1"},
+			want: -1,
+		},
+		{
+			name: "prerelease of a band's first release 10.0.400-rc.1 < 10.0.400",
+			args: args{v1: "10.0.400-rc.1", v2: "10.0.400"},
 			want: -1,
 		},
 		{
